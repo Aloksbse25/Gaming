@@ -1,0 +1,76 @@
+-- MySQL Cheat Sheet (Create, Update, Delete, Truncate, Join)
+
+-- =============================================
+-- 1. CREATE
+-- =============================================
+-- Create a database
+CREATE DATABASE mydb;
+
+-- Create a table
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    age INT DEFAULT 18,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create index
+CREATE INDEX idx_name ON users(name);
+
+-- =============================================
+-- 2. UPDATE
+-- =============================================
+-- Update single record
+UPDATE users 
+SET name = 'John Doe', age = 30 
+WHERE id = 1;
+
+-- Update multiple records
+UPDATE users 
+SET age = age + 1 
+WHERE age < 20;
+
+-- =============================================
+-- 3. DELETE
+-- =============================================
+-- Delete specific records
+DELETE FROM users 
+WHERE id = 5;
+
+-- Delete all records (CAUTION!)
+DELETE FROM users;
+
+-- =============================================
+-- 4. TRUNCATE
+-- =============================================
+-- Delete all records (faster than DELETE, resets auto-increment)
+TRUNCATE TABLE users;
+
+-- =============================================
+-- 5. JOIN
+-- =============================================
+-- Inner Join (common records in both tables)
+SELECT u.name, o.order_id, o.amount
+FROM users u
+INNER JOIN orders o ON u.id = o.user_id;
+
+-- Left Join (all users + their orders if any)
+SELECT u.name, o.order_id
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id;
+
+-- Right Join (all orders + user data if available)
+SELECT u.name, o.order_id
+FROM users u
+RIGHT JOIN orders o ON u.id = o.user_id;
+
+-- Full Outer Join (MySQL workaround)
+SELECT u.name, o.order_id FROM users u LEFT JOIN orders o ON u.id = o.user_id
+UNION
+SELECT u.name, o.order_id FROM users u RIGHT JOIN orders o ON u.id = o.user_id;
+
+-- Cross Join (cartesian product)
+SELECT u.name, p.product_name
+FROM users u
+CROSS JOIN products p;
