@@ -5,3 +5,5 @@ git --version - # Check Git version (all OS)  -
 git config --global user.name "Your Name"  
 git config --global user.email "your@email.com"  
 git config --list  # View all settings  
+git status -- Check git status
+
