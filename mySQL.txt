@@ -1,76 +1,104 @@
--- MySQL Cheat Sheet (Create, Update, Delete, Truncate, Join)
+-- DATABASE OPERATIONS
+-- Create database (with check to avoid errors)
+CREATE DATABASE IF NOT EXISTS college;
+CREATE DATABASE IF NOT EXISTS xyz;
 
--- =============================================
--- 1. CREATE
--- =============================================
--- Create a database
-CREATE DATABASE mydb;
+-- Delete database
+DROP DATABASE IF EXISTS college;
+DROP DATABASE IF EXISTS xyz;
 
--- Create a table
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    email VARCHAR(100) UNIQUE,
-    age INT DEFAULT 18,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- Switch to a database
+USE college;
+
+-- Show available databases
+SHOW DATABASES;
+
+-- Show tables in current database
+SHOW TABLES;
+
+
+-- TABLE OPERATIONS
+-- Create table with primary key
+CREATE TABLE IF NOT EXISTS student (
+    rollno INT PRIMARY KEY,
+    name VARCHAR(50),
+    marks INT NOT NULL,
+    grade VARCHAR(1),
+    city VARCHAR(20)
 );
 
--- Create index
-CREATE INDEX idx_name ON users(name);
+-- Create another table example
+CREATE TABLE IF NOT EXISTS emp (
+    id INT PRIMARY KEY,
+    name VARCHAR(50),
+    salary INT
+);
 
--- =============================================
--- 2. UPDATE
--- =============================================
--- Update single record
-UPDATE users 
-SET name = 'John Doe', age = 30 
-WHERE id = 1;
 
--- Update multiple records
-UPDATE users 
-SET age = age + 1 
-WHERE age < 20;
+-- DATA MANIPULATION
+-- Insert data (multiple formats)
+INSERT INTO student VALUES (101, 'Alok', 44, 'C', 'Pune');
+INSERT INTO student (rollno, name, marks, grade, city) 
+VALUES (102, 'Blok', 22, 'D', 'Wune');
 
--- =============================================
--- 3. DELETE
--- =============================================
--- Delete specific records
-DELETE FROM users 
-WHERE id = 5;
+-- Bulk insert
+INSERT INTO emp (id, name, salary) VALUES
+    (1, "adam", 25000),
+    (2, "bob", 30000),
+    (3, "casey", 40000);
 
--- Delete all records (CAUTION!)
-DELETE FROM users;
 
--- =============================================
--- 4. TRUNCATE
--- =============================================
--- Delete all records (faster than DELETE, resets auto-increment)
-TRUNCATE TABLE users;
+-- BASIC QUERIES
+-- Select all data
+SELECT * FROM student;
 
--- =============================================
--- 5. JOIN
--- =============================================
--- Inner Join (common records in both tables)
-SELECT u.name, o.order_id, o.amount
-FROM users u
-INNER JOIN orders o ON u.id = o.user_id;
+-- Select specific columns
+SELECT name, marks FROM student;
 
--- Left Join (all users + their orders if any)
-SELECT u.name, o.order_id
-FROM users u
-LEFT JOIN orders o ON u.id = o.user_id;
+-- Select distinct values
+SELECT DISTINCT city FROM student;
 
--- Right Join (all orders + user data if available)
-SELECT u.name, o.order_id
-FROM users u
-RIGHT JOIN orders o ON u.id = o.user_id;
 
--- Full Outer Join (MySQL workaround)
-SELECT u.name, o.order_id FROM users u LEFT JOIN orders o ON u.id = o.user_id
-UNION
-SELECT u.name, o.order_id FROM users u RIGHT JOIN orders o ON u.id = o.user_id;
+-- CONDITIONAL QUERIES
+-- Where clause
+SELECT * FROM student WHERE marks < 23;
+SELECT * FROM student WHERE city = "Pune";
 
--- Cross Join (cartesian product)
-SELECT u.name, p.product_name
-FROM users u
-CROSS JOIN products p;
+-- AND/OR operators
+SELECT * FROM student WHERE marks > 40 AND city = "Pune";
+SELECT * FROM student WHERE marks > 40 OR city = "Pune";
+
+-- BETWEEN operator
+SELECT * FROM student WHERE marks BETWEEN 80 AND 90;
+
+-- IN operator
+SELECT * FROM student WHERE city IN("Pune", "Mumbai");
+
+-- NOT operator
+SELECT * FROM student WHERE city NOT IN ("Delhi", "Mumbai");
+
+
+-- DATA AGGREGATION
+-- Limit results
+SELECT * FROM student LIMIT 3;
+
+-- Order results
+SELECT * FROM student ORDER BY city ASC;
+SELECT * FROM student ORDER BY marks DESC LIMIT 3;
+
+-- Aggregate functions
+SELECT MAX(marks) FROM student;
+SELECT MIN(marks) FROM student;
+SELECT COUNT(rollno) FROM student;
+SELECT AVG(marks) FROM student;
+
+
+-- GROUP OPERATIONS
+-- Group by with count
+SELECT city, COUNT(name) FROM student GROUP BY city;
+
+-- Group by with average (ordered)
+SELECT city, AVG(marks) 
+FROM student 
+GROUP BY city 
+ORDER BY AVG(marks) DESC;
